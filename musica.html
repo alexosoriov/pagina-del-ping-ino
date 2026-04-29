@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Python Exception Master - Catcher Pro</title>
+    <link rel="stylesheet" href="css.css">
+</head>
+<body>
+    <canvas id="matrix-bg"></canvas>
+
+    <div class="main-wrapper">
+        <header>
+            <h1>TERMINAL FIELD v2.0 🏟️</h1>
+            <p>Gestión de Excepciones: Robustez y UX</p>
+        </header>
+
+        <div class="game-container">
+            <div class="top-row">
+                <div class="terminal-window">
+                    <div class="bar"><span>● ● ●</span> bash — catcher.py</div>
+                    <div id="consola" class="screen">
+                        <p class="sys">> [SISTEMA] Listo. Presiona el botón para iniciar.</p>
+                    </div>
+                </div>
+                <div class="error-log">
+                    <h3>ERROR_LOG</h3>
+                    <ul id="log-list"></ul>
+                </div>
+            </div>
+
+            <div id="estadio" class="baseball-field">
+                <div class="grass"></div>
+                <div class="diamond"></div>
+                
+                <div id="tux-player" class="tux">
+                    <span class="body">🐧</span>
+                    <span id="bat" class="bat">🏏</span>
+                    <div id="impact" class="impact-effect">💥</div>
+                </div>
+
+                <div id="ball-1" class="ball">ValueError</div>
+                <div id="ball-2" class="ball">FileNotFound</div>
+                <div id="ball-3" class="ball">ZeroDivision</div>
+            </div>
+
+            <button class="action-btn" onclick="ejecutarSimulacion()">▶ EJECUTAR SCRIPT ROBUSTO</button>
+        </div>
+    </div>
+    <script src="java.js"></script>
+</body>
+</html>
