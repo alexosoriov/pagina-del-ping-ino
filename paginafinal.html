@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>App PRO</title>
+
+<!-- 🎨 ICONO -->
+<link rel="icon" href="https://cdn-icons-png.flaticon.com/512/4712/4712109.png">
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#020617;
+  color:white;
+  display:flex;
+  justify-content:center;
+}
+
+/* 🚀 SPLASH */
+#splash{
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:#020617;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:22px;
+  z-index:999;
+  animation:fadeOut 1s ease forwards;
+  animation-delay:2s;
+}
+
+@keyframes fadeOut{
+  to{opacity:0; visibility:hidden;}
+}
+
+/* 📱 APP */
+.phone{
+  width:360px;
+  min-height:100vh;
+  background:linear-gradient(180deg,#020617,#0f172a);
+  padding:20px;
+  box-shadow:0 0 30px black;
+}
+
+.card{
+  background:#1e293b;
+  padding:15px;
+  border-radius:15px;
+  margin-top:15px;
+  animation:fade .5s ease;
+}
+
+@keyframes fade{
+  from{opacity:0; transform:translateY(10px);}
+  to{opacity:1;}
+}
+
+input{
+  width:100%;
+  padding:10px;
+  margin:5px 0;
+  border-radius:10px;
+  border:none;
+  background:#0f172a;
+  color:white;
+}
+
+button{
+  width:100%;
+  padding:10px;
+  margin-top:5px;
+  border:none;
+  border-radius:10px;
+  background:#38bdf8;
+  cursor:pointer;
+  transition:.2s;
+}
+
+button:hover{
+  transform:scale(1.03);
+}
+
+.console{
+  background:black;
+  color:#00ff88;
+  padding:10px;
+  border-radius:10px;
+  margin-top:10px;
+  font-family:monospace;
+}
+
+.historial{
+  max-height:150px;
+  overflow:auto;
+  font-size:12px;
+  text-align:left;
+}
+
+#tux{
+  width:90px;
+  display:block;
+  margin:auto;
+  animation:float 2s infinite;
+}
+
+@keyframes float{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-10px);}
+}
+
+.hidden{display:none;}
+</style>
+</head>
+
+<body>
+
+<!-- 🚀 SPLASH -->
+<div id="splash">🚀 Cargando App...</div>
+
+<div class="phone">
+
+<h2>💻 App de Errores</h2>
+
+<!-- LOGIN -->
+<div id="login" class="card">
+<input id="email" placeholder="Correo">
+<input id="password" type="password" placeholder="Contraseña">
+
+<button onclick="register()">Crear cuenta</button>
+<button onclick="login()">Entrar</button>
+
+<p id="msg"></p>
+</div>
+
+<!-- APP -->
+<div id="app" class="hidden">
+
+<div class="card">
+<input id="edad" placeholder="Edad">
+<input id="numero" placeholder="Número para dividir 100">
+<input id="archivo" placeholder="Archivo (datos.txt)">
+
+<button onclick="ejecutar()">Ejecutar</button>
+<button onclick="logout()">Cerrar sesión</button>
+</div>
+
+<img id="tux" src="https://upload.wikimedia.org/wikipedia/commons/a/af/Tux.png">
+
+<div class="console" id="console">>>> listo...</div>
+
+<div class="card">
+<button onclick="verHistorial()">📊 Ver historial</button>
+<button onclick="limpiarHistorial()">🗑 Borrar historial</button>
+
+<div class="historial" id="historial"></div>
+</div>
+
+</div>
+
+</div>
+
+<script>
+const msg = document.getElementById("msg");
+
+/* 🆕 REGISTRO */
+function register(){
+  const email = document.getElementById("email").value;
+  const pass = document.getElementById("password").value;
+
+  if(pass.length < 4){
+    msg.textContent="❌ Contraseña muy corta";
+    return;
+  }
+
+  localStorage.setItem("user", JSON.stringify({email, pass}));
+  msg.textContent="✔ Cuenta creada";
+}
+
+/* 🔐 LOGIN */
+function login(){
+  const email = document.getElementById("email").value;
+  const pass = document.getElementById("password").value;
+
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  if(user && user.email === email && user.pass === pass){
+    document.getElementById("login").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
+    localStorage.setItem("session","true");
+  }else{
+    msg.textContent="❌ Datos incorrectos";
+  }
+}
+
+/* 🔄 RECORDAR SESIÓN */
+if(localStorage.getItem("session")==="true"){
+  document.getElementById("login").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+}
+
+/* 🔓 LOGOUT */
+function logout(){
+  localStorage.removeItem("session");
+  location.reload();
+}
+
+/* 💾 GUARDAR */
+function guardar(data){
+  let registros = JSON.parse(localStorage.getItem("registros")) || [];
+  registros.push(data);
+  localStorage.setItem("registros", JSON.stringify(registros));
+}
+
+/* 📊 HISTORIAL */
+function verHistorial(){
+  let registros = JSON.parse(localStorage.getItem("registros")) || [];
+  let html = "";
+
+  registros.forEach(r=>{
+    html += `Edad:${r.edad} | Resultado:${100/r.numero}<br>`;
+  });
+
+  document.getElementById("historial").innerHTML = html || "Sin datos";
+}
+
+/* 🗑 BORRAR */
+function limpiarHistorial(){
+  localStorage.removeItem("registros");
+  document.getElementById("historial").innerHTML = "Historial eliminado";
+}
+
+/* 💻 EJECUTAR */
+function ejecutar(){
+
+  const consola = document.getElementById("console");
+
+  try{
+    let edad = parseInt(document.getElementById("edad").value);
+    if(isNaN(edad)) throw "ValueError";
+
+    let numero = parseInt(document.getElementById("numero").value);
+    if(numero===0) throw "ZeroDivisionError";
+
+    let resultado = 100/numero;
+
+    let archivo = document.getElementById("archivo").value;
+    if(archivo!=="datos.txt") throw "FileNotFoundError";
+
+    consola.innerHTML=`Edad: ${edad}<br>Resultado: ${resultado}`;
+
+    guardar({edad,numero,archivo});
+
+  }catch(e){
+
+    if(e==="ValueError") consola.innerHTML="❌ ValueError";
+    if(e==="ZeroDivisionError") consola.innerHTML="❌ No dividir por 0";
+    if(e==="FileNotFoundError") consola.innerHTML="❌ Archivo no existe";
+
+  }finally{
+    consola.innerHTML+="<br>✔ fin";
+  }
+}
+</script>
+
+</body>
+</html>
